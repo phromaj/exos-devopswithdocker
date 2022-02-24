@@ -34,7 +34,7 @@ You found the correct password. Secret message is:
 This is the secret message
 
 Ex 1.7
-Dockefile content:
+Dockerfile content:
 FROM devopsdockeruh/simple-web-service:alpine
 CMD server
 commands:
@@ -52,3 +52,60 @@ Ex 1.9
 // need to create file beforehand or it will try to write into a folder
 touch text.log
 docker run --rm -v /home/lucas/exercises-devopswithdocker/text.log:/usr/src/app/text.log devopsdockeruh/simple-web-service
+
+Ex 1.10
+docker run -p 1111:8080 web-server
+
+Ex 1.11
+FROM openjdk:8
+EXPOSE 8080
+WORKDIR /usr/src/app
+COPY . .
+RUN chmod +x mvnw
+RUN ./mvnw package
+CMD [ "java", "-jar", "./target/docker-example-1.1.3.jar" ]
+
+ex 1.12
+FROM node:lts-alpine
+EXPOSE 5000
+COPY . .
+RUN npm install
+RUN npm run build
+RUN npm install -g serve
+CMD [ "serve", "-s", "-l", "5000", "build" ]
+
+ex 1.13
+FROM golang:1.16.14-alpine3.15
+EXPOSE 8080
+WORKDIR /usr/src/app
+COPY . .
+RUN go build
+CMD ./server
+
+ex 1.14
+backend dockerfile:
+FROM golang:1.16.14-alpine3.15
+EXPOSE 8080
+WORKDIR /usr/src/app
+COPY . .
+RUN go build
+ENV PORT=8080
+ENV REQUEST_ORIGIN=http://localhost:5000
+CMD ./server
+frontend dockerfile:
+FROM node:lts-alpine
+EXPOSE 5000
+COPY . .
+RUN npm install
+RUN REACT_APP_BACKEND_URL=http://localhost:8080 npm run build
+RUN npm install -g serve
+CMD [ "serve", "-s", "-l", "5000", "build" ]
+commands:
+docker run -p 8080:8080 -d backend
+docker run -p 5000:5000 -d frontend
+
+ex 1.15:
+https://hubdocker.com/repository/docker/phromaj/socialunifier/general
+
+ex 1.16:
+http://exercice-docker.herokuapp.com/
